@@ -16,6 +16,7 @@
 
 namespace verona::rt
 {
+  extern thread_local bool yielded;
   /**
    * There is typically one scheduler thread pinned to each physical CPU core.
    * Each scheduler thread is responsible for running cowns in its queue and
@@ -207,6 +208,20 @@ namespace verona::rt
         Logging::cout() << "Schedule work " << work << Logging::endl;
 
         work->run();
+
+        if (yielded)
+        {
+          Logging::cout() << "Yielded work " << work << Logging::endl;
+
+          core->q.enqueue(work);
+          work = nullptr;
+
+          yielded = false;
+        }
+        else
+        {
+          Logging::cout() << "Finished work " << work << Logging::endl;
+        }
 
         yield();
       }

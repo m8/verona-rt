@@ -6,6 +6,8 @@
 
 namespace verona::rt
 {
+  thread_local bool yielded = false;
+
   /**
    * This class provides the full `when` functionality.  It
    * provides the closure and lifetime management for the class.
@@ -20,11 +22,14 @@ namespace verona::rt
       Be* body = behaviour->get_body<Be>();
       (*body)();
 
-      behaviour->release_all();
+      if (!yielded)
+      {
+        behaviour->release_all();
 
-      // Dealloc behaviour
-      body->~Be();
-      work->dealloc();
+        // Dealloc behaviour
+        body->~Be();
+        work->dealloc();
+      }
     }
 
   public:
