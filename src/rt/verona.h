@@ -24,5 +24,6 @@
 #include "sched/noticeboard.h"
 #include "sched/notification.h"
 #include "sched/schedulerthread.h"
+#include "sched/coro.h"
 
 #include <snmalloc/snmalloc.h>
